@@ -7,69 +7,90 @@ using System.Threading.Tasks;
 namespace FactoryMethod
 {
 
-    #region Product
-    public interface IFactory
-    {
-        void Create();
-    }
-    #endregion
+    //Product
+    //This defines the interface of objects the factory method creates
 
-    #region Concrete Product
-    public class Bike : IFactory
+    //ConcreteProduct
+    //This is a class that implements the Product interface.
+
+    //Creator
+    //This is an abstract class and declares the factory method, which returns an object of type Product.
+    //This may also define a default implementation of the factory method that returns a default ConcreteProduct object.
+    //This may call the factory method to create a Product object.
+
+    //ConcreteCreator
+    //This is a class that implements the Creator class and overrides the factory method to return an instance of a ConcreteProduct.
+
+    //Product - CreditCard
+    //ConcreteProduct- MoneyBackCreditCard, TitaniumCreditCard, PlatinumCreditCard
+    //Creator- CreditCardFactory
+    //ConcreteCreator- ConcreteCreditCardFactory
+
+
+    public interface CreditCard
     {
-        public void Create()
+        void GetCreditCard();
+    }
+
+    public class MoneyBackCreditCard : CreditCard
+    {
+        public void GetCreditCard()
         {
-            Console.WriteLine("BIKE is created from factory!");
+            Console.WriteLine("Money back credit card is created with limit of R1,00,000.00 and annual charge of R100.00.");
         }
     }
 
-    public class Car : IFactory
+    public class TitaniumCreditCard : CreditCard
     {
-        public void Create()
+        public void GetCreditCard()
         {
-            Console.WriteLine("CAR is created from factory!");
+            Console.WriteLine("Titanium credit card is created with limit of R2,50,000.00 and annual charge of R250.00.");
         }
     }
-    #endregion
 
-    #region Creator
-    public abstract class VehicleFactory
+    public class PlatinumCreditCard : CreditCard
     {
-        public abstract IFactory GetVehicle(string vehicle);
-    }
-    #endregion
-
-    #region Concrete Creator
-    public class ConcreteVehicleFactory : VehicleFactory
-    {
-        public override IFactory GetVehicle(string vehicle)
+        public void GetCreditCard()
         {
-            switch (vehicle.ToLower())
+            Console.WriteLine("Platinum credit card is created with limit of R5,00,000.00 and annual charge of R500.00.");
+        }
+    }
+
+    public abstract class CreditCardFactory
+    {
+        public abstract CreditCard GetCreditCard(string type);
+    }
+
+    public class ConcreteCreditCardFactory : CreditCardFactory
+    {
+        public override CreditCard GetCreditCard(string type)
+        {
+            switch (type.ToLower())
             {
-                case "bike":
-                    return new Bike();
-                case "car":
-                    return new Car();
+                case "moneyback":
+                    return new MoneyBackCreditCard();
+                case "titanium":
+                    return new TitaniumCreditCard();
+                case "platinum":
+                    return new PlatinumCreditCard();
                 default:
-                    throw new ApplicationException(string.Format("Vehicle '{0}' cannot be created", vehicle));
+                    throw new ApplicationException(string.Format("Credit card '{0}' cannot be created", type));
             }
         }
     }
-    #endregion
 
     class Program
     {
         static void Main(string[] args)
         {
-            VehicleFactory factory = new ConcreteVehicleFactory();
+            CreditCardFactory creditCardFactory = new ConcreteCreditCardFactory();
+            Console.Write("Enter the card type you would like to create: ");
 
-            IFactory bike = factory.GetVehicle("Bike");
-            bike.Create();
+            string type = Console.ReadLine();
+            CreditCard creditCard = creditCardFactory.GetCreditCard(type);
 
-            IFactory car = factory.GetVehicle("Car");
-            car.Create();
-
-            Console.ReadKey();
+            creditCard.GetCreditCard();
+            Console.ReadLine();
         }
     }
 }
