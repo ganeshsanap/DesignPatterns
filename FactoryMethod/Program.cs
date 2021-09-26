@@ -29,6 +29,7 @@ namespace FactoryMethod
     //Creator- CreditCardFactory
     //ConcreteCreator- ConcreteCreditCardFactory
 
+    //Product
     public abstract class CreditCard
     {
         public abstract string CardType { get; }
@@ -36,6 +37,7 @@ namespace FactoryMethod
         public abstract int AnnualCharge { get; set; }
     }
 
+    //ConcreteProduct1
     public class MoneyBackCreditCard : CreditCard
     {
         private readonly string _cardType;
@@ -67,6 +69,7 @@ namespace FactoryMethod
         }
     }
 
+    //ConcreteProduct2
     public class TitaniumCreditCard : CreditCard
     {
         private readonly string _cardType;
@@ -98,6 +101,7 @@ namespace FactoryMethod
         }
     }
 
+    //ConcreteProduct3
     public class PlatinumCreditCard : CreditCard
     {
         private readonly string _cardType;
@@ -129,11 +133,13 @@ namespace FactoryMethod
         }
     }
 
+    //Creator
     public abstract class CreditCardFactory
     {
         public abstract CreditCard GetCreditCard();
     }
 
+    //ConcreteCreator1
     public class MoneyBackFactory : CreditCardFactory
     {
         private int _creditLimit;
@@ -151,6 +157,7 @@ namespace FactoryMethod
         }
     }
 
+    //ConcreteCreator2
     public class TitaniumFactory : CreditCardFactory
     {
         private int _creditLimit;
@@ -168,6 +175,7 @@ namespace FactoryMethod
         }
     }
 
+    //ConcreteCreator3
     public class PlatinumFactory : CreditCardFactory
     {
         private int _creditLimit;

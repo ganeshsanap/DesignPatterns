@@ -7,6 +7,30 @@ using System.Threading.Tasks;
 namespace AbstractFactory
 {
 
+    //The Abstract Factory design pattern provides an interface for creating families
+    //of related or dependent objects without specifying their concrete classes.
+
+    //AbstractFactory
+    //This is an interface for operations which is used to create abstract product.
+
+    //ConcreteFactory
+    //This is a class which implements the AbstractFactory interface operations to create concrete products.
+
+    //AbstractProduct
+    //This declares an interface for a type of product object
+
+    //Product
+    //This defines a product object to be created by the corresponding concrete factory also implements the AbstractProduct interface
+
+    //Client
+    //This is a class which uses AbstractFactory and AbstractProduct interfaces to create a family of related objects.
+
+    //AbstractFactory- IMobilePhone
+    //ConcreteFactory - Nokia, Samsung
+    //AbstractProduct- ISmartPhone, INormalPhone
+    //Product- NokiaPixel, Nokia1600, SamsungGalaxy, SamsungGuru
+    //Client- MobileClient
+
     //AbstractProductA
     interface ISmartPhone
     {
@@ -71,7 +95,7 @@ namespace AbstractFactory
         }
 
         public INormalPhone GetNormalPhone()
-        {
+        { 
             return new Nokia1600();
         }
     }
