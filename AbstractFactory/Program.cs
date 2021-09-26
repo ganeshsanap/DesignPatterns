@@ -6,166 +6,130 @@ using System.Threading.Tasks;
 
 namespace AbstractFactory
 {
-    interface Bike
+
+    //AbstractProductA
+    interface ISmartPhone
     {
-        string Name();
+        string GetModelDetails();
     }
 
-    interface Scooter
+    //AbstractProductB
+    interface INormalPhone
     {
-        string Name();
+        string GetModelDetails();
     }
 
-    class RegularBike : Bike
+    //ProductA1
+    class NokiaPixel : ISmartPhone
     {
-        public string Name()
+        public string GetModelDetails()
         {
-            return "Regular Bike- Name";
-        }
-    }
-
-    class SportsBike : Bike
-    {
-        public string Name()
-        {
-            return "Sports Bike- Name";
+            return "Model: Nokia Pixel\nRAM: 3GB\nCamera: 8MP\n";
         }
     }
 
-    class RegularScooter : Scooter
+    //ProductA2
+    class SamsungGalaxy : ISmartPhone
     {
-        public string Name()
+        public string GetModelDetails()
         {
-            return "Regular Scooter- Name";
+            return "Model: Samsung Galaxy\nRAM: 2GB\nCamera: 13MP\n";
         }
     }
 
-    class Scooty : Scooter
+    //ProductB1
+    class Nokia1600 : INormalPhone
     {
-        public string Name()
+        public string GetModelDetails()
         {
-            return "Scooty- Name";
+            return "Model: Nokia 1600\nRAM: NA\nCamera: NA\n";
         }
     }
 
-    interface VehicleFactory
+    //ProductB2
+    class SamsungGuru : INormalPhone
     {
-        Bike GetBike(string typeOfBike);
-        Scooter GetScooter(string typeofScooter);
-    }
-
-
-    class HondaFactory : VehicleFactory
-    {
-        public Bike GetBike(string typeOfBike)
+        public string GetModelDetails()
         {
-            switch (typeOfBike)
-            {
-                case "Sports":
-                    return new SportsBike();
-                case "Regular":
-                    return new RegularBike();
-                default:
-                    throw new ApplicationException(string.Format("Vehicle '{0}' cannot be created", typeOfBike));
-            }
-
-        }
-
-        public Scooter GetScooter(string typeOfScooter)
-        {
-            switch (typeOfScooter)
-            {
-                case "Sports":
-                    return new Scooty();
-                case "Regular":
-                    return new RegularScooter();
-                default:
-                    throw new ApplicationException(string.Format("Vehicle '{0}' cannot be created", typeOfScooter));
-            }
-
+            return "Model: Samsung Guru\nRAM: NA\nCamera: NA\n";
         }
     }
 
-    class HeroFactory : VehicleFactory
+    //AbstractFactory
+    interface IMobilePhone
     {
-        public Bike GetBike(string typeOfBike)
-        {
-            switch (typeOfBike)
-            {
-                case "Sports":
-                    return new SportsBike();
-                case "Regular":
-                    return new RegularBike();
-                default:
-                    throw new ApplicationException(string.Format("Vehicle '{0}' cannot be created", typeOfBike));
-            }
+        ISmartPhone GetSmartPhone();
+        INormalPhone GetNormalPhone();
+    }
 
+    //ConcreteFactory1
+    class Nokia : IMobilePhone
+    {
+        public ISmartPhone GetSmartPhone()
+        {
+            return new NokiaPixel();
         }
 
-        public Scooter GetScooter(string typeOfScooter)
+        public INormalPhone GetNormalPhone()
         {
-            switch (typeOfScooter)
-            {
-                case "Sports":
-                    return new Scooty();
-                case "Regular":
-                    return new RegularScooter();
-                default:
-                    throw new ApplicationException(string.Format("Vehicle '{0}' cannot be created", typeOfScooter));
-            }
+            return new Nokia1600();
         }
     }
 
-
-    class VehicleClient
+    //ConcreteFactory2
+    class Samsung : IMobilePhone
     {
-        Bike bike;
-        Scooter scooter;
-
-        public VehicleClient(VehicleFactory factory, string type)
+        public ISmartPhone GetSmartPhone()
         {
-            bike = factory.GetBike(type);
-            scooter = factory.GetScooter(type);
+            return new SamsungGalaxy();
         }
 
-        public string GetBikeName()
+        public INormalPhone GetNormalPhone()
         {
-            return bike.Name();
+            return new SamsungGuru();
         }
-
-        public string GetScooterName()
-        {
-            return scooter.Name();
-        }
-
     }
 
+    //Client
+    class MobileClient
+    {
+        ISmartPhone smartPhone;
+        INormalPhone normalPhone;
+
+        public MobileClient(IMobilePhone factory)
+        {
+            smartPhone = factory.GetSmartPhone();
+            normalPhone = factory.GetNormalPhone();
+        }
+
+        public string GetSmartPhoneModelDetails()
+        {
+            return smartPhone.GetModelDetails();
+        }
+
+        public string GetNormalPhoneModelDetails()
+        {
+            return normalPhone.GetModelDetails();
+        }
+    }
 
     class Program
     {
         static void Main(string[] args)
         {
-            VehicleFactory honda = new HondaFactory();
-            VehicleClient hondaclient = new VehicleClient(honda, "Regular");
+            IMobilePhone nokiaMobilePhone = new Nokia();
+            MobileClient nokiaClient = new MobileClient(nokiaMobilePhone);
 
-            Console.WriteLine("******* Honda **********");
-            Console.WriteLine(hondaclient.GetBikeName());
-            Console.WriteLine(hondaclient.GetScooterName());
+            Console.WriteLine("********* NOKIA **********");
+            Console.WriteLine(nokiaClient.GetSmartPhoneModelDetails());
+            Console.WriteLine(nokiaClient.GetNormalPhoneModelDetails());
 
-            hondaclient = new VehicleClient(honda, "Sports");
-            Console.WriteLine(hondaclient.GetBikeName());
-            Console.WriteLine(hondaclient.GetScooterName());
+            IMobilePhone samsungMobilePhone = new Samsung();
+            MobileClient samsungClient = new MobileClient(samsungMobilePhone);
 
-            VehicleFactory hero = new HeroFactory();
-            VehicleClient heroclient = new VehicleClient(hero, "Regular");
-
-            Console.WriteLine("******* Hero **********");
-            Console.WriteLine(heroclient.GetBikeName());
-            Console.WriteLine(heroclient.GetScooterName());
-
-            heroclient = new VehicleClient(hero, "Sports");
-            Console.WriteLine(heroclient.GetBikeName());
-            Console.WriteLine(heroclient.GetScooterName());
+            Console.WriteLine("******* SAMSUNG **********");
+            Console.WriteLine(samsungClient.GetSmartPhoneModelDetails());
+            Console.WriteLine(samsungClient.GetNormalPhoneModelDetails());
 
             Console.ReadKey();
         }
