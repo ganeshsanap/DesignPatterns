@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace FactoryMethod
 {
+    //The Factory Method design pattern defines an interface for creating an object, 
+    //but let subclasses decide which class to instantiate.
+    //This pattern lets a class defer instantiation to subclasses.
 
     //Product
     //This defines the interface of objects the factory method creates
@@ -26,56 +29,159 @@ namespace FactoryMethod
     //Creator- CreditCardFactory
     //ConcreteCreator- ConcreteCreditCardFactory
 
-
-    public interface CreditCard
+    public abstract class CreditCard
     {
-        void GetCreditCard();
+        public abstract string CardType { get; }
+        public abstract int CreditLimit { get; set; }
+        public abstract int AnnualCharge { get; set; }
     }
 
     public class MoneyBackCreditCard : CreditCard
     {
-        public void GetCreditCard()
+        private readonly string _cardType;
+        private int _creditLimit;
+        private int _annualCharge;
+
+        public MoneyBackCreditCard(int creditLimit, int annualCharge)
         {
-            Console.WriteLine("Money back credit card is created with limit of R1,00,000.00 and annual charge of R100.00.");
+            _cardType = "MoneyBack";
+            _creditLimit = creditLimit;
+            _annualCharge = annualCharge;
+        }
+
+        public override string CardType
+        {
+            get { return _cardType; }
+        }
+
+        public override int CreditLimit
+        {
+            get { return _creditLimit; }
+            set { _creditLimit = value; }
+        }
+
+        public override int AnnualCharge
+        {
+            get { return _annualCharge; }
+            set { _annualCharge = value; }
         }
     }
 
     public class TitaniumCreditCard : CreditCard
     {
-        public void GetCreditCard()
+        private readonly string _cardType;
+        private int _creditLimit;
+        private int _annualCharge;
+
+        public TitaniumCreditCard(int creditLimit, int annualCharge)
         {
-            Console.WriteLine("Titanium credit card is created with limit of R2,50,000.00 and annual charge of R250.00.");
+            _cardType = "Titanium";
+            _creditLimit = creditLimit;
+            _annualCharge = annualCharge;
+        }
+
+        public override string CardType
+        {
+            get { return _cardType; }
+        }
+
+        public override int CreditLimit
+        {
+            get { return _creditLimit; }
+            set { _creditLimit = value; }
+        }
+
+        public override int AnnualCharge
+        {
+            get { return _annualCharge; }
+            set { _annualCharge = value; }
         }
     }
 
     public class PlatinumCreditCard : CreditCard
     {
-        public void GetCreditCard()
+        private readonly string _cardType;
+        private int _creditLimit;
+        private int _annualCharge;
+
+        public PlatinumCreditCard(int creditLimit, int annualCharge)
         {
-            Console.WriteLine("Platinum credit card is created with limit of R5,00,000.00 and annual charge of R500.00.");
+            _cardType = "Platinum";
+            _creditLimit = creditLimit;
+            _annualCharge = annualCharge;
+        }
+
+        public override string CardType
+        {
+            get { return _cardType; }
+        }
+
+        public override int CreditLimit
+        {
+            get { return _creditLimit; }
+            set { _creditLimit = value; }
+        }
+
+        public override int AnnualCharge
+        {
+            get { return _annualCharge; }
+            set { _annualCharge = value; }
         }
     }
 
     public abstract class CreditCardFactory
     {
-        public abstract CreditCard GetCreditCard(string type);
+        public abstract CreditCard GetCreditCard();
     }
 
-    public class ConcreteCreditCardFactory : CreditCardFactory
+    public class MoneyBackFactory : CreditCardFactory
     {
-        public override CreditCard GetCreditCard(string type)
+        private int _creditLimit;
+        private int _annualCharge;
+
+        public MoneyBackFactory(int creditLimit, int annualCharge)
         {
-            switch (type.ToLower())
-            {
-                case "moneyback":
-                    return new MoneyBackCreditCard();
-                case "titanium":
-                    return new TitaniumCreditCard();
-                case "platinum":
-                    return new PlatinumCreditCard();
-                default:
-                    throw new ApplicationException(string.Format("Credit card '{0}' cannot be created", type));
-            }
+            _creditLimit = creditLimit;
+            _annualCharge = annualCharge;
+        }
+
+        public override CreditCard GetCreditCard()
+        {
+            return new MoneyBackCreditCard(_creditLimit, _annualCharge);
+        }
+    }
+
+    public class TitaniumFactory : CreditCardFactory
+    {
+        private int _creditLimit;
+        private int _annualCharge;
+
+        public TitaniumFactory(int creditLimit, int annualCharge)
+        {
+            _creditLimit = creditLimit;
+            _annualCharge = annualCharge;
+        }
+
+        public override CreditCard GetCreditCard()
+        {
+            return new TitaniumCreditCard(_creditLimit, _annualCharge);
+        }
+    }
+
+    public class PlatinumFactory : CreditCardFactory
+    {
+        private int _creditLimit;
+        private int _annualCharge;
+
+        public PlatinumFactory(int creditLimit, int annualCharge)
+        {
+            _creditLimit = creditLimit;
+            _annualCharge = annualCharge;
+        }
+
+        public override CreditCard GetCreditCard()
+        {
+            return new PlatinumCreditCard(_creditLimit, _annualCharge);
         }
     }
 
@@ -83,14 +189,37 @@ namespace FactoryMethod
     {
         static void Main(string[] args)
         {
-            CreditCardFactory creditCardFactory = new ConcreteCreditCardFactory();
-            Console.Write("Enter the card type you would like to create: ");
+            CreditCardFactory factory = null;
+            Console.Write("Enter the card type you would like to visit: ");
+            string card = Console.ReadLine();
 
-            string type = Console.ReadLine();
-            CreditCard creditCard = creditCardFactory.GetCreditCard(type);
+            switch (card.ToLower())
+            {
+                case "moneyback":
+                    factory = new MoneyBackFactory(50000, 0);
+                    break;
+                case "titanium":
+                    factory = new TitaniumFactory(100000, 500);
+                    break;
+                case "platinum":
+                    factory = new PlatinumFactory(500000, 1000);
+                    break;
+                default:
+                    break;
+            }
 
-            creditCard.GetCreditCard();
-            Console.ReadLine();
+            if (factory != null)
+            {
+                CreditCard creditCard = factory.GetCreditCard();
+                Console.WriteLine("\nYour card details are below :");
+                Console.WriteLine("Card Type: {0}\nCredit Limit: {1}\nAnnual Charge: {2}", creditCard.CardType, creditCard.CreditLimit, creditCard.AnnualCharge);
+            }
+            else
+            {
+                Console.WriteLine("Card type {0} not supported.", card);
+            }
+
+            Console.ReadKey();
         }
     }
 }
